@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espaços Amostrais — Plano de Aula</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #1a1612;
+    --ink-soft:  #3d3530;
+    --paper:     #faf7f2;
+    --cream:     #f2ede4;
+    --rule:      #d9cfc0;
+    --accent:    #8b2e10;
+    --accent2:   #1a4d6e;
+    --accent3:   #2d6a40;
+    --gold:      #b08032;
+    --tag-d:     #1a4d6e;
+    --tag-c:     #2d6a40;
+    --tag-dc:    #6b3d8a;
+    --ex-bg:     #fdf4ee;
+    --ex-border: #c9783a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  /* ── SIDEBAR NAV ─────────────────────────── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--ink);
+    color: #c8bfb0;
+    overflow-y: auto;
+    padding: 28px 0 40px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-logo {
+    padding: 0 22px 24px;
+    border-bottom: 1px solid #2e2a25;
+    margin-bottom: 20px;
+  }
+  .sidebar-logo .omega {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    color: var(--gold);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .sidebar-logo span {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7a7068;
+  }
+
+  .nav-section {
+    padding: 0 14px;
+    margin-bottom: 6px;
+  }
+  .nav-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #5a5248;
+    padding: 6px 8px 4px;
+    display: block;
+  }
+  .nav-link {
+    display: block;
+    padding: 7px 10px;
+    font-size: 0.82rem;
+    color: #9e9488;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.2s, color 0.2s;
+    line-height: 1.35;
+  }
+  .nav-link:hover, .nav-link.active {
+    background: #262018;
+    color: #e8dfd0;
+  }
+  .nav-link .num {
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    margin-right: 5px;
+  }
+
+  /* ── MAIN ────────────────────────────────── */
+  .main {
+    margin-left: 240px;
+    min-height: 100vh;
+    background: var(--paper);
+  }
+
+  /* ── HERO ────────────────────────────────── */
+  .hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 72px 64px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: 'Ω';
+    position: absolute;
+    right: -10px;
+    top: -30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 22rem;
+    color: #ffffff08;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.9rem;
+    line-height: 1.15;
+    max-width: 640px;
+    margin-bottom: 18px;
+  }
+  .hero-sub {
+    font-size: 1rem;
+    color: #9e9488;
+    font-style: italic;
+    margin-bottom: 32px;
+  }
+  .meta-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: #ffffff12;
+    border: 1px solid #ffffff22;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #c8bfb0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pill strong { color: var(--gold); }
+
+  /* ── CONTENT WRAPPER ─────────────────────── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 64px 80px;
+  }
+
+  /* ── TOPIC SECTIONS ──────────────────────── */
+  .topic {
+    margin-bottom: 72px;
+  }
+
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .topic-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: var(--rule);
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: -4px;
+  }
+  .topic-meta {}
+  .topic-meta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .topic-presenter {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9e9488;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .subsection {
+    margin-bottom: 36px;
+  }
+  .subsection h3 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 12px;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent2);
+  }
+
+  p { margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  strong { font-weight: 600; color: var(--ink); }
+  em { font-style: italic; color: var(--ink-soft); }
+
+  /* ── BLOCKQUOTE / DEFINITION ─────────────── */
+  blockquote {
+    background: #f0ebe0;
+    border-left: 4px solid var(--gold);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  blockquote strong { color: var(--ink); }
+
+  /* ── LISTS ───────────────────────────────── */
+  ul, ol {
+    padding-left: 24px;
+    margin: 10px 0 14px;
+  }
+  li { margin-bottom: 5px; }
+
+  /* ── TAGS ────────────────────────────────── */
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    font-weight: 500;
+  }
+  .tag-discreto  { background: #dbeafe; color: var(--tag-d); }
+  .tag-continuo  { background: #dcfce7; color: var(--tag-c); }
+  .tag-ambos     { background: #ede9fe; color: var(--tag-dc); }
+
+  /* ── TABLES ──────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 18px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  thead tr { background: var(--ink); color: var(--paper); }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+  }
+  tbody tr { border-bottom: 1px solid var(--rule); }
+  tbody tr:nth-child(even) { background: #f5f0e8; }
+  tbody td { padding: 9px 14px; vertical-align: top; }
+  td:first-child { color: var(--ink-soft); }
+
+  /* ── CODE / MATH ─────────────────────────── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: #ede8de;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--ink);
+    color: #c8e6c9;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.83rem;
+    padding: 20px 24px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+    line-height: 1.7;
+  }
+
+  /* ── MATH DISPLAY ────────────────────────── */
+  .math-block {
+    background: #f7f2e8;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 16px 22px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--accent2);
+    text-align: center;
+  }
+
+  /* ── EXAMPLE CARDS ───────────────────────── */
+  .example-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .ex-card {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .ex-card .ex-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .ex-card .ex-formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .ex-card .ex-note {
+    font-size: 0.8rem;
+    color: #8a8070;
+    font-style: italic;
+  }
+
+  /* ── COMPARISON BOX ──────────────────────── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .compare-col { border-right: 1px solid var(--rule); }
+  .compare-col:last-child { border-right: none; }
+  .compare-head {
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+  .compare-head.d  { background: #dbeafe; color: var(--tag-d); }
+  .compare-head.di { background: #ede9fe; color: var(--tag-dc); }
+  .compare-head.c  { background: #dcfce7; color: var(--tag-c); }
+  .compare-body {
+    padding: 12px 14px;
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--rule);
+    line-height: 1.5;
+  }
+  .compare-body code { font-size: 0.8em; }
+
+  /* ── AXIOM CARDS ─────────────────────────── */
+  .axiom-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .axiom {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--rule);
+  }
+  .axiom-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    flex-shrink: 0;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  .axiom-content strong { color: var(--accent); }
+
+  /* ── TREE DIAGRAM ────────────────────────── */
+  .tree-svg-wrap {
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+
+  /* ── EXERCISES ───────────────────────────── */
+  .exercises-section {
+    margin-top: 72px;
+    padding-top: 40px;
+    border-top: 3px double var(--rule);
+  }
+  .exercises-section > h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .exercises-section > .sub {
+    font-style: italic;
+    color: #9e9488;
+    font-size: 0.9rem;
+    margin-bottom: 36px;
+  }
+
+  .exercise {
+    background: var(--ex-bg);
+    border: 1px solid #e8cdb4;
+    border-left: 5px solid var(--ex-border);
+    border-radius: 0 8px 8px 0;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  .exercise h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .exercise .presenter-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 9px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+  }
+  .exercise ol { padding-left: 20px; }
+  .exercise li { margin-bottom: 8px; font-size: 0.95rem; }
+
+  /* ── SUMMARY DIAGRAM ─────────────────────── */
+  .summary-diagram {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 12px;
+    padding: 36px 40px;
+    margin: 32px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 2.0;
+    text-align: center;
+  }
+  .summary-diagram .node {
+    display: inline-block;
+    background: #2a2520;
+    border: 1px solid #4a4540;
+    padding: 6px 18px;
+    border-radius: 5px;
+    margin: 2px;
+  }
+  .summary-diagram .node.gold { border-color: var(--gold); color: var(--gold); }
+  .summary-diagram .node.blue { border-color: #5b9bd5; color: #a8d4f5; }
+  .summary-diagram .node.green { border-color: #5ba87b; color: #a8e0c0; }
+  .summary-diagram .node.purple { border-color: #9b6bd5; color: #d0b0f5; }
+  .summary-diagram .arrow { color: #5a5248; font-size: 1rem; display: block; margin: 2px 0; }
+
+  /* ── FOOTER ──────────────────────────────── */
+  .page-footer {
+    background: var(--ink);
+    color: #5a5248;
+    text-align: center;
+    padding: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    margin-left: 0;
+  }
+  .page-footer span { color: var(--gold); }
+
+  /* ── SCROLL PROGRESS ─────────────────────── */
+  #progress {
+    position: fixed;
+    top: 0; left: 240px; right: 0;
+    height: 3px;
+    background: var(--gold);
+    transform-origin: left;
+    transform: scaleX(0);
+    z-index: 200;
+    transition: transform 0.1s;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    #progress { left: 0; }
+    .hero { padding: 48px 28px 36px; }
+    .hero h1 { font-size: 2rem; }
+    .content { padding: 36px 24px 60px; }
+    .example-grid, .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <span class="omega">Ω</span>
+    <span>Espaços Amostrais</span>
+  </div>
+
+  <div class="nav-section">
+    <span class="nav-label">Tópicos</span>
+    <a class="nav-link" href="#t1"><span class="num">01</span>Fundamentos</a>
+    <a class="nav-link" href="#t2"><span class="num">02</span>Espaço Discreto</a>
+    <a class="nav-link" href="#t3"><span class="num">03</span>Espaço Contínuo</a>
+    <a class="nav-link" href="#t4"><span class="num">04</span>Comparação</a>
+    <a class="nav-link" href="#t5"><span class="num">05</span>Aplicações</a>
+  </div>
+
+  <div class="nav-section" style="margin-top:auto; padding-top:20px; border-top:1px solid #2e2a25;">
+    <span class="nav-label">Exercícios</span>
+    <a class="nav-link" href="#ex1"><span class="num">E1</span>Apresentador 1</a>
+    <a class="nav-link" href="#ex2"><span class="num">E2</span>Apresentador 2</a>
+    <a class="nav-link" href="#ex3"><span class="num">E3</span>Apresentador 3</a>
+    <a class="nav-link" href="#ex4"><span class="num">E4</span>Apresentador 4</a>
+    <a class="nav-link" href="#ex5"><span class="num">E5</span>Apresentador 5</a>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">Matemática · 3.º Ano · Estatística e Probabilidade</div>
+    <h1>Espaços Amostrais:<br>Discretos e Contínuos</h1>
+    <p class="hero-sub">Plano de Aula — 5 apresentadores</p>
+    <div class="meta-pills">
+      <div class="pill">⏱ <strong>100 min</strong> total</div>
+      <div class="pill">👥 <strong>5</strong> apresentadores</div>
+      <div class="pill">✏️ Exercícios <strong>ao final</strong></div>
+      <div class="pill">📐 Base <strong>axiomática</strong></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════ TÓPICO 1 -->
+    <section class="topic" id="t1">
+      <div class="topic-header">
+        <div class="topic-num">01</div>
+        <div class="topic-meta">
+          <h2>Fundamentos: Experimento Aleatório e a Noção de Espaço Amostral</h2>
+          <div class="topic-presenter">Apresentador 1 · aprox. 18 min</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>1.1 O que é um Experimento Aleatório?</h3>
+        <p>Um <strong>experimento aleatório</strong> é todo experimento que, mesmo realizado nas mesmas condições, pode apresentar resultados diferentes a cada realização. Não é possível prever com certeza qual resultado ocorrerá.</p>
+        <ul>
+          <li>Lançar uma moeda — pode sair cara ou coroa</li>
+          <li>Lançar um dado — pode sair 1, 2, 3, 4, 5 ou 6</li>
+          <li>Sortear um aluno de uma turma</li>
+          <li>Medir a temperatura de uma cidade amanhã</li>
+        </ul>
+        <p>Em contraste, um experimento <strong>determinístico</strong> sempre produz o mesmo resultado nas mesmas condições — ex.: calcular a área de um quadrado de lado 3 sempre resulta em 9.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>1.2 Evento Elementar e Resultado</h3>
+        <p>Cada possível resultado de um experimento aleatório é chamado de <strong>evento elementar</strong> (ou <strong>ponto amostral</strong>). É o resultado mais simples possível, que não pode ser decomposto em partes menores dentro do contexto do experimento.</p>
+        <div class="example-grid">
+          <div class="ex-card">
+            <div class="ex-label">Moeda</div>
+            <div class="ex-formula">{cara} e {coroa}</div>
+            <div class="ex-note">2 eventos elementares</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">Dado</div>
+            <div class="ex-formula">{1}, {2}, {3}, {4}, {5}, {6}</div>
+            <div class="ex-note">6 eventos elementares</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>1.3 Espaço Amostral — Definição Formal (Axiomática)</h3>
+        <p>O <strong>espaço amostral</strong> de um experimento aleatório é o conjunto de <strong>todos os resultados possíveis</strong> desse experimento. É representado pela letra grega <strong>Ω</strong> (ômega) ou pela letra <strong>S</strong>.</p>
+        <blockquote><p><strong>Definição:</strong> Ω = { todos os resultados possíveis do experimento }</p></blockquote>
+        <p>O espaço amostral deve ser:</p>
+        <ul>
+          <li><strong>Exaustivo:</strong> todo resultado possível deve estar incluído.</li>
+          <li><strong>Mutuamente exclusivo:</strong> nenhum resultado pode aparecer mais de uma vez; cada resultado pertence a uma, e somente uma, categoria.</li>
+        </ul>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Experimento</th><th>Espaço Amostral Ω</th></tr></thead>
+            <tbody>
+              <tr><td>Lançar uma moeda</td><td><code>{cara, coroa}</code></td></tr>
+              <tr><td>Lançar um dado</td><td><code>{1, 2, 3, 4, 5, 6}</code></td></tr>
+              <tr><td>Lançar duas moedas</td><td><code>{(C,C), (C,K), (K,C), (K,K)}</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>1.4 Eventos</h3>
+        <p>Um <strong>evento</strong> é qualquer subconjunto do espaço amostral.</p>
+        <ul>
+          <li><strong>Evento impossível:</strong> o conjunto vazio ∅ — nunca ocorre.</li>
+          <li><strong>Evento certo:</strong> o próprio Ω — sempre ocorre.</li>
+          <li><strong>Evento elementar:</strong> subconjunto com um único resultado.</li>
+          <li><strong>Evento composto:</strong> subconjunto com dois ou mais resultados.</li>
+        </ul>
+        <blockquote><p>Exemplo: no lançamento de um dado, o evento "sair número par" é <strong>A = {2, 4, 6}</strong>, que é um subconjunto de Ω = {1, 2, 3, 4, 5, 6}.</p></blockquote>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ TÓPICO 2 -->
+    <section class="topic" id="t2">
+      <div class="topic-header">
+        <div class="topic-num">02</div>
+        <div class="topic-meta">
+          <h2>Espaço Amostral Discreto</h2>
+          <div class="topic-presenter">Apresentador 2 · aprox. 22 min</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>2.1 Definição</h3>
+        <p>Um espaço amostral é dito <strong>discreto</strong> quando o conjunto de resultados possíveis é <strong>finito</strong> ou <strong>infinito contável</strong>.</p>
+        <blockquote><p><strong>Em linguagem simples:</strong> um espaço amostral é discreto quando é possível, ao menos em teoria, contar seus resultados um a um.</p></blockquote>
+        <div class="compare-grid" style="grid-template-columns: 1fr 1fr; margin-top:14px;">
+          <div class="compare-col">
+            <div class="compare-head d">Finito</div>
+            <div class="compare-body">Número limitado de elementos — podem ser listados até o fim. Ex.: lançar um dado → 6 resultados.</div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-head di">Infinito contável</div>
+            <div class="compare-body">Infinitos elementos, mas listáveis em sequência ordenada, como ℕ = {1, 2, 3, …}.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>2.2 Espaço Amostral Discreto Finito</h3>
+        <div class="example-grid">
+          <div class="ex-card">
+            <div class="ex-label">a) Dado</div>
+            <div class="ex-formula">Ω = {1, 2, 3, 4, 5, 6}</div>
+            <div class="ex-note">6 elementos · finito</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">b) Duas moedas</div>
+            <div class="ex-formula">Ω = {(C,C),(C,K),(K,C),(K,K)}</div>
+            <div class="ex-note">4 elementos · finito</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">c) Baralho</div>
+            <div class="ex-formula">Ω = {52 cartas}</div>
+            <div class="ex-note">52 elementos · finito</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">d) Turma</div>
+            <div class="ex-formula">Ω = {aluno₁, …, aluno₃₅}</div>
+            <div class="ex-note">35 elementos · finito</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>2.3 Princípio Multiplicativo</h3>
+        <p>Quando o experimento envolve etapas, o <strong>Princípio Multiplicativo</strong> determina o tamanho de Ω sem listar todos os elementos.</p>
+        <div class="math-block">
+          Se há <strong>k etapas</strong> com n₁, n₂, …, nₖ resultados em cada uma:<br>
+          <strong>|Ω| = n₁ × n₂ × … × nₖ</strong>
+        </div>
+        <p><strong>Exemplo:</strong> dado (6) + moeda (2) → 6 × 2 = <strong>12 elementos</strong></p>
+        <pre>Ω = {(1,C),(1,K),(2,C),(2,K),(3,C),(3,K),
+     (4,C),(4,K),(5,C),(5,K),(6,C),(6,K)}</pre>
+      </div>
+
+      <div class="subsection">
+        <h3>2.4 Espaço Amostral Discreto Infinito Contável</h3>
+        <p>Em alguns experimentos, o número de resultados é infinito, mas ainda discreto — listável em sequência.</p>
+        <blockquote><p><strong>Exemplo clássico:</strong> lançar uma moeda até sair cara pela primeira vez. O número de lançamentos pode ser 1, 2, 3, …, sem limite superior.<br>
+        Ω = {1, 2, 3, 4, …}</p></blockquote>
+        <p>Outro exemplo: contar carros em um pedágio até a primeira placa final 7.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>2.5 Representação — Diagrama de Árvore</h3>
+        <p>Útil para experimentos em etapas. Exemplo: dado + moeda.</p>
+        <div class="tree-svg-wrap">
+          <svg viewBox="0 0 560 240" width="100%" style="max-width:560px; font-family:'JetBrains Mono',monospace; font-size:12px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Root label -->
+            <text x="30" y="30" fill="#b08032" font-size="10" font-weight="500">DADO</text>
+            <text x="210" y="30" fill="#b08032" font-size="10" font-weight="500">MOEDA</text>
+            <text x="370" y="30" fill="#b08032" font-size="10" font-weight="500">RESULTADO</text>
+            <!-- Lines from 1 -->
+            <line x1="60" y1="60" x2="200" y2="55" stroke="#d9cfc0" stroke-width="1.5"/>
+            <line x1="60" y1="60" x2="200" y2="90" stroke="#d9cfc0" stroke-width="1.5"/>
+            <text x="40" y="65" fill="#1a4d6e" font-weight="500">1</text>
+            <text x="210" y="58" fill="#3d3530">Cara</text>
+            <text x="210" y="93" fill="#3d3530">Coroa</text>
+            <text x="370" y="58" fill="#2d6a40">(1, Cara)</text>
+            <text x="370" y="93" fill="#2d6a40">(1, Coroa)</text>
+            <line x1="250" y1="55" x2="365" y2="55" stroke="#d9cfc0" stroke-width="1"/>
+            <line x1="250" y1="90" x2="365" y2="90" stroke="#d9cfc0" stroke-width="1"/>
+            <!-- Lines from 2 -->
+            <line x1="60" y1="120" x2="200" y2="115" stroke="#d9cfc0" stroke-width="1.5"/>
+            <line x1="60" y1="120" x2="200" y2="150" stroke="#d9cfc0" stroke-width="1.5"/>
+            <text x="40" y="125" fill="#1a4d6e" font-weight="500">2</text>
+            <text x="210" y="118" fill="#3d3530">Cara</text>
+            <text x="210" y="153" fill="#3d3530">Coroa</text>
+            <text x="370" y="118" fill="#2d6a40">(2, Cara)</text>
+            <text x="370" y="153" fill="#2d6a40">(2, Coroa)</text>
+            <line x1="250" y1="115" x2="365" y2="115" stroke="#d9cfc0" stroke-width="1"/>
+            <line x1="250" y1="150" x2="365" y2="150" stroke="#d9cfc0" stroke-width="1"/>
+            <!-- dots -->
+            <text x="44" y="195" fill="#9e9488" font-size="16">⋮</text>
+            <text x="440" y="210" fill="#9e9488" font-size="11" font-style="italic">… até (6, Coroa)</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ TÓPICO 3 -->
+    <section class="topic" id="t3">
+      <div class="topic-header">
+        <div class="topic-num">03</div>
+        <div class="topic-meta">
+          <h2>Espaço Amostral Contínuo</h2>
+          <div class="topic-presenter">Apresentador 3 · aprox. 20 min</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>3.1 Motivação</h3>
+        <p>Há experimentos em que os resultados não podem ser listados um a um, nem mesmo em teoria. Nesses casos, o espaço amostral é <strong>contínuo</strong>.</p>
+        <blockquote>
+          <p><strong>Exemplo motivador:</strong> você gira uma roleta de 0° a 360°. Ela pode parar em 45°, 45,1°, 45,01°, 45,001°… Entre quaisquer dois ângulos, sempre existe outro — é impossível listar todos os resultados.</p>
+        </blockquote>
+      </div>
+
+      <div class="subsection">
+        <h3>3.2 Definição</h3>
+        <blockquote>
+          <p><strong>Definição:</strong> Ω é <strong>contínuo</strong> quando seus elementos formam um conjunto <strong>não contável</strong> — não é possível listá-los em nenhuma sequência, por menor que seja o intervalo considerado.</p>
+        </blockquote>
+      </div>
+
+      <div class="subsection">
+        <h3>3.3 Notação de Intervalos</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Notação</th><th>Significado</th><th>Inclui extremos?</th></tr></thead>
+            <tbody>
+              <tr><td><code>[a, b]</code></td><td>Intervalo fechado</td><td>Sim, ambos</td></tr>
+              <tr><td><code>(a, b)</code></td><td>Intervalo aberto</td><td>Não, nenhum</td></tr>
+              <tr><td><code>[a, b)</code></td><td>Semifechado à esquerda</td><td>Inclui a, exclui b</td></tr>
+              <tr><td><code>(a, b]</code></td><td>Semifechado à direita</td><td>Exclui a, inclui b</td></tr>
+              <tr><td><code>[a, +∞)</code></td><td>Maior ou igual a a</td><td>Inclui a</td></tr>
+              <tr><td><code>(−∞, b]</code></td><td>Menor ou igual a b</td><td>Inclui b</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>3.4 Exemplos de Espaços Contínuos</h3>
+        <div class="example-grid">
+          <div class="ex-card">
+            <div class="ex-label">a) Roleta 0°–360°</div>
+            <div class="ex-formula">Ω = [0°, 360°)</div>
+            <div class="ex-note">0° incluído; 360° coincide com 0°</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">b) Tempo na fila (min)</div>
+            <div class="ex-formula">Ω = [0, +∞)</div>
+            <div class="ex-note">Tempo nunca é negativo</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">c) Temperatura em Campinas</div>
+            <div class="ex-formula">Ω = [−10, 50]</div>
+            <div class="ex-note">Faixa realista em °C</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">d) Ponto numa calçada (2 m)</div>
+            <div class="ex-formula">Ω = [0, 2]</div>
+            <div class="ex-note">em metros</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>3.5 Probabilidade de um Ponto Isolado em Espaços Contínuos</h3>
+        <p>Em espaços contínuos, a probabilidade de ocorrer um resultado <strong>exato e específico</strong> é sempre <strong>zero</strong>.</p>
+        <blockquote>
+          <p>A probabilidade da roleta parar <em>exatamente</em> em 120,000…° é zero — não porque é impossível, mas porque há infinitos outros pontos igualmente possíveis. Por isso, em espaços contínuos trabalhamos sempre com <strong>intervalos</strong>.</p>
+        </blockquote>
+        <ul>
+          <li>✅ "Probabilidade de a temperatura estar <strong>entre</strong> 20°C e 25°C" — faz sentido</li>
+          <li>❌ "Probabilidade de a temperatura ser <strong>exatamente</strong> 22,3°C" — sempre = 0</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ TÓPICO 4 -->
+    <section class="topic" id="t4">
+      <div class="topic-header">
+        <div class="topic-num">04</div>
+        <div class="topic-meta">
+          <h2>Comparação, Identificação e Casos Mistos</h2>
+          <div class="topic-presenter">Apresentador 4 · aprox. 18 min</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>4.1 Quadro Comparativo</h3>
+        <div class="compare-grid">
+          <div class="compare-col">
+            <div class="compare-head d">Discreto Finito</div>
+            <div class="compare-body">Listável completamente.<br>Representação: <code>{a,b,c,…}</code><br>Prob. de ponto: pode ser &gt; 0.<br>Ex.: dado, baralho.</div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-head di">Discreto ∞ Contável</div>
+            <div class="compare-body">Listável em sequência.<br>Representação: <code>{1,2,3,…}</code><br>Prob. de ponto: pode ser &gt; 0.<br>Ex.: moeda até cara.</div>
+          </div>
+          <div class="compare-col">
+            <div class="compare-head c">Contínuo</div>
+            <div class="compare-body">Não listável.<br>Representação: <code>[a,b]</code> etc.<br>Prob. de ponto: sempre = 0.<br>Ex.: temperatura, tempo.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>4.2 Como Identificar o Tipo de Espaço Amostral</h3>
+        <p><strong>Passo 1:</strong> Os resultados são valores isolados (inteiros, categorias) ou escala contínua (medidas, tempos)?</p>
+        <ul>
+          <li>Valores isolados → provável <strong>discreto</strong></li>
+          <li>Escala contínua → provável <strong>contínuo</strong></li>
+        </ul>
+        <p><strong>Passo 2 (se discreto):</strong> sabe-se exatamente quantos resultados existem?</p>
+        <ul>
+          <li>Sim → <strong>finito</strong></li>
+          <li>Não, mas numeráveis → <strong>infinito contável</strong></li>
+        </ul>
+
+        <div class="table-wrap" style="margin-top:16px;">
+          <table>
+            <thead><tr><th>Experimento</th><th>Tipo</th></tr></thead>
+            <tbody>
+              <tr><td>Eleição com 3 candidatos</td><td><span class="tag tag-discreto">Discreto finito</span></td></tr>
+              <tr><td>Número de tentativas até o primeiro gol</td><td><span class="tag tag-ambos">Discreto ∞ contável</span></td></tr>
+              <tr><td>Peso de um recém-nascido</td><td><span class="tag tag-continuo">Contínuo</span></td></tr>
+              <tr><td>Tempo até uma lâmpada queimar</td><td><span class="tag tag-continuo">Contínuo</span></td></tr>
+              <tr><td>Nota inteira de 0 a 10</td><td><span class="tag tag-discreto">Discreto finito</span></td></tr>
+              <tr><td>Nota com decimais livres de 0 a 10</td><td><span class="tag tag-continuo">Contínuo</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>4.3 O Espaço Amostral Depende do Experimento, Não do Fenômeno</h3>
+        <p>O mesmo fenômeno pode gerar espaços amostrais diferentes dependendo de <strong>como medimos</strong> o resultado.</p>
+        <blockquote>
+          <p><strong>Exemplo — temperatura amanhã:</strong><br>
+          "Faz calor / não faz calor" → Ω = {calor, não calor} → <em>discreto finito</em><br>
+          Graus inteiros → Ω = {…,18,19,20,…} → <em>discreto finito</em><br>
+          Precisão arbitrária → Ω = [a,b] → <em>contínuo</em></p>
+        </blockquote>
+        <p>A definição de Ω é uma <strong>escolha de modelagem</strong>, feita segundo a precisão e o objetivo do estudo.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>4.4 Espaços Amostrais em Mais de Uma Dimensão</h3>
+        <p>Quando o experimento envolve <strong>duas ou mais variáveis simultâneas</strong>, Ω passa a ser representado em mais de uma dimensão.</p>
+        <div class="example-grid">
+          <div class="ex-card">
+            <div class="ex-label">Discreto 2D — dois dados</div>
+            <div class="ex-formula">Ω = {(i,j) | i,j ∈ {1,…,6}}</div>
+            <div class="ex-note">36 pares ordenados</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">Contínuo 2D — ponto no quadrado</div>
+            <div class="ex-formula">Ω = {(x,y) | 0≤x≤1, 0≤y≤1}</div>
+            <div class="ex-note">Eventos são regiões do plano</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ TÓPICO 5 -->
+    <section class="topic" id="t5">
+      <div class="topic-header">
+        <div class="topic-num">05</div>
+        <div class="topic-meta">
+          <h2>Aplicações, Modelagem e Axiomas de Kolmogorov</h2>
+          <div class="topic-presenter">Apresentador 5 · aprox. 22 min</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>5.1 Por que Definir Bem o Espaço Amostral?</h3>
+        <p>O espaço amostral é a <strong>base de toda a probabilidade</strong>. Uma definição imprecisa ou incompleta de Ω leva a cálculos incorretos.</p>
+        <blockquote>
+          <p><strong>Erro clássico — a moeda viciada:</strong> assumir Ω = {cara, coroa} não garante que os resultados sejam equiprováveis. O espaço amostral correto é necessário, mas não suficiente — é preciso especificar também a estrutura de probabilidade sobre ele.</p>
+        </blockquote>
+      </div>
+
+      <div class="subsection">
+        <h3>5.2 Exemplos de Modelagem Real</h3>
+        <div class="example-grid" style="grid-template-columns: 1fr;">
+          <div class="ex-card">
+            <div class="ex-label">Situação 1 — Controle de qualidade</div>
+            <div class="ex-formula" style="font-size:0.8rem;">Ω = {(A,A,A),(A,A,R),(A,R,A),(A,R,R),(R,A,A),(R,A,R),(R,R,A),(R,R,R)}</div>
+            <div class="ex-note">2³ = 8 elementos · Discreto finito</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">Situação 2 — Tempo de atendimento em banco</div>
+            <div class="ex-formula">Ω = [0, +∞) &nbsp;&nbsp;(em minutos)</div>
+            <div class="ex-note">Contínuo — qualquer valor não negativo é possível</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-label">Situação 3 — Dardo em alvo circular (raio 30 cm)</div>
+            <div class="ex-formula">Ω = {todos os pontos no círculo de raio 30 cm}</div>
+            <div class="ex-note">Contínuo bidimensional — eventos são regiões do alvo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h3>5.3 Axiomas de Kolmogorov — A Base Formal</h3>
+        <p>O espaço amostral Ω é o primeiro elemento do <strong>espaço de probabilidade</strong> <em>(Ω, F, P)</em>, formalizado por Andrei Kolmogorov em 1933. A função de probabilidade P deve satisfazer três axiomas:</p>
+        <div class="axiom-list">
+          <div class="axiom">
+            <div class="axiom-num">1</div>
+            <div class="axiom-content">
+              <strong>Não negatividade:</strong> para qualquer evento A,<br>
+              <code>P(A) ≥ 0</code>
+            </div>
+          </div>
+          <div class="axiom">
+            <div class="axiom-num">2</div>
+            <div class="axiom-content">
+              <strong>Normalização:</strong> o evento certo tem probabilidade 1,<br>
+              <code>P(Ω) = 1</code>
+            </div>
+          </div>
+          <div class="axiom">
+            <div class="axiom-num">3</div>
+            <div class="axiom-content">
+              <strong>Aditividade:</strong> se A ∩ B = ∅ (mutuamente exclusivos),<br>
+              <code>P(A ∪ B) = P(A) + P(B)</code>
+            </div>
+          </div>
+        </div>
+        <p>Sem Ω claramente estabelecido, não há como construir uma função de probabilidade válida.</p>
+      </div>
+
+      <div class="subsection">
+        <h3>5.4 Resumo Visual da Aula</h3>
+        <div class="summary-diagram">
+          <div class="node gold">EXPERIMENTO ALEATÓRIO</div>
+          <div class="arrow">↓</div>
+          <div class="node gold">ESPAÇO AMOSTRAL Ω<br><span style="font-size:0.75em;color:#9e9488">"Todos os resultados possíveis"</span></div>
+          <div class="arrow">↙ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↘</div>
+          <div style="display:inline-flex;gap:40px;margin:4px 0;">
+            <div>
+              <div class="node blue">DISCRETO</div>
+              <div class="arrow">↙ &nbsp; ↘</div>
+              <div style="display:inline-flex;gap:8px;">
+                <div class="node" style="font-size:0.75rem;">Finito<br>{a,b,c}</div>
+                <div class="node" style="font-size:0.75rem;">∞ Contável<br>{1,2,3,…}</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;">
+              <div class="node green">CONTÍNUO<br><span style="font-size:0.75rem;">[a,b], (a,b]…</span></div>
+            </div>
+          </div>
+          <div class="arrow">↓</div>
+          <div class="node" style="border-color:#c8bfb0;">EVENTOS = subconjuntos de Ω</div>
+          <div class="arrow">↓</div>
+          <div class="node purple">PROBABILIDADE  P : F → [0, 1]<br><span style="font-size:0.75rem;">(axiomas de Kolmogorov)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════ EXERCÍCIOS -->
+    <section class="exercises-section" id="exercicios">
+      <h2>Exercícios</h2>
+      <p class="sub">Aplicação coletiva · aprox. 20 min finais · resolvidos pelos apresentadores na lousa, com participação da turma.</p>
+
+      <div class="exercise" id="ex1">
+        <div class="presenter-badge">Apresentador 1</div>
+        <h3>Exercício 1</h3>
+        <p>Uma urna contém bolas numeradas de 1 a 8. Sorteia-se uma bola ao acaso.</p>
+        <ol type="a">
+          <li>Descreva o espaço amostral Ω desse experimento.</li>
+          <li>Descreva, como subconjunto de Ω, o evento A = "sair uma bola com número ímpar".</li>
+          <li>Descreva o evento B = "sair uma bola com número maior que 5".</li>
+          <li>O evento C = "sair uma bola com número 9" é o evento impossível ou o evento certo? Justifique usando a notação de conjuntos.</li>
+        </ol>
+      </div>
+
+      <div class="exercise" id="ex2">
+        <div class="presenter-badge">Apresentador 2</div>
+        <h3>Exercício 2</h3>
+        <p>Uma loja vende camisetas em três tamanhos (P, M, G) e duas cores (azul, vermelho). Um cliente escolhe aleatoriamente um tamanho e uma cor.</p>
+        <ol type="a">
+          <li>Construa o espaço amostral Ω usando um diagrama de árvore.</li>
+          <li>Quantos elementos tem Ω? Use o princípio multiplicativo para confirmar.</li>
+          <li>Descreva o evento D = "o cliente escolhe uma camiseta azul" como subconjunto de Ω.</li>
+          <li>Suponha que a loja acrescenta um quarto tamanho (XG). Quantos elementos teria o novo Ω?</li>
+        </ol>
+      </div>
+
+      <div class="exercise" id="ex3">
+        <div class="presenter-badge">Apresentador 3</div>
+        <h3>Exercício 3</h3>
+        <p>Para cada experimento abaixo, classifique o espaço amostral como <strong>discreto finito</strong>, <strong>discreto infinito contável</strong> ou <strong>contínuo</strong>, e escreva Ω usando a notação adequada:</p>
+        <ol type="a">
+          <li>Medir a altura (em cm) de um estudante escolhido ao acaso em uma escola.</li>
+          <li>Contar o número de chamadas recebidas em um call center em um dia.</li>
+          <li>Registrar se um paciente tem ou não determinada doença.</li>
+          <li>Lançar um dado até que o número 6 apareça pela primeira vez, e registrar quantos lançamentos foram necessários.</li>
+          <li>Escolher aleatoriamente um instante de tempo dentro de um intervalo de 1 hora para realizar uma medição.</li>
+        </ol>
+      </div>
+
+      <div class="exercise" id="ex4">
+        <div class="presenter-badge">Apresentador 4</div>
+        <h3>Exercício 4</h3>
+        <p>Duas giratórias são lançadas. A primeira tem as faces numeradas de 1 a 4, e a segunda tem as faces A, B e C.</p>
+        <ol type="a">
+          <li>Descreva o espaço amostral Ω usando a notação de pares ordenados.</li>
+          <li>Quantos elementos tem Ω?</li>
+          <li>Descreva o evento E = "sair o número 2 na primeira giratória".</li>
+          <li>Descreva o evento F = "sair a letra B na segunda giratória".</li>
+          <li>Descreva o evento G = E ∩ F (ocorrem E e F simultaneamente). O que esse evento representa?</li>
+        </ol>
+      </div>
+
+      <div class="exercise" id="ex5">
+        <div class="presenter-badge">Apresentador 5</div>
+        <h3>Exercício 5</h3>
+        <p>Um ponto é escolhido aleatoriamente sobre um segmento de reta de comprimento 10 cm.</p>
+        <ol type="a">
+          <li>Descreva o espaço amostral Ω desse experimento.</li>
+          <li>Esse espaço amostral é discreto ou contínuo? Justifique.</li>
+          <li>Qual é a probabilidade de o ponto cair <strong>exatamente</strong> na marca de 3 cm? Explique sua resposta sem usar cálculo.</li>
+          <li>Faz mais sentido perguntar pela probabilidade de o ponto cair <strong>entre</strong> 2 cm e 5 cm do que no ponto exato de 3 cm? Por quê?</li>
+          <li>Descreva, usando notação de intervalo, o evento H = "o ponto cai na segunda metade do segmento".</li>
+        </ol>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+
+  <div class="page-footer">
+    3.º Ano do Ensino Médio · Estatística e Probabilidade · <span>Espaços Amostrais</span> · Boa apresentação!
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress');
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.transform = `scaleX(${window.scrollY / total})`;
+  });
+
+  // Active nav link
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
